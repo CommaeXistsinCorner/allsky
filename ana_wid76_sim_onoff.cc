@@ -10,7 +10,7 @@
 //#include        "point_source_wcda.cc"
 #include "spectra_sim.cc"
 #include "Astro.c"
-double normlize(int norm_f, int clean_flag);
+double normalize(int norm_f, int clean_flag);
 //void htoe2(double zen,double azim,double lst,double *ra,double *dec);
 
 static float n[NZEAZ];
@@ -189,7 +189,7 @@ int main(int argc, char *argv[])
     printf("Now t=%d\t  ki2=%.20f\n", t, ki2);
     fprintf(fp_log, "Now t=%d\t  ki2=%.20f\n", t, ki2);
     //printf("%f %f %f\n",kia,kib,ki2);
-    normlize(1, t < iter ? 0 : 1);
+    normalize(1, t < iter ? 0 : 1);
     //    if(t==iter) break;
     if (t > 9 && fabs(ki20 - ki21) / ki20 < fabs(ki21 - ki2) / ki21)
       break;
@@ -269,7 +269,7 @@ int main(int argc, char *argv[])
   return 0;
 }
 
-double normlize(int norm_f, int clean_flag)
+double normalize(int norm_f, int clean_flag)
 {
   int i, j;
   ///////////////////////global normal//////////////////
@@ -299,7 +299,7 @@ double normlize(int norm_f, int clean_flag)
       }
     }
 
-    printf("normlize=%f \n", I_c0);
+    printf("normalize=%f \n", I_c0);
   }
 
   else if (norm_f == 1)

@@ -300,7 +300,7 @@ unsigned int swap4(unsigned int dd)
 /********** transfomation of (galactic Dec. & galactic RA.) 
                         from (decrination & right asension)  **********/
 
-void eguator_galaxcy(double ras, double dec, double *gras, double *gdec)
+void equator_galaxy(double ras, double dec, double *gras, double *gdec)
 //double ras, dec, *gras, *gdec;
 {
 
@@ -329,7 +329,7 @@ void eguator_galaxcy(double ras, double dec, double *gras, double *gdec)
 
 /********** transfomation of (decrination & right asension)  
                         from (galactic Dec. & galactic RA.) **********/
-void galaxcy_equator(double gras, double gdec, double *ras, double *dec)
+void galaxy_equator(double gras, double gdec, double *ras, double *dec)
 //double *ras, *dec, gras, gdec;
 {
 

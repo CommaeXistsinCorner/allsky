@@ -11,16 +11,16 @@
 #endif
 
 #define LHAASO_Lati 29.3586  /*  latitude  */
-#define LHAASO_Lngi 100.1372 /* longtitude */
+#define LHAASO_Lngi 100.1372 /* longitude */
 
 //#define  LHAASO_Lati 19.0          /*  latitude  */
-//#define  LHAASO_Lngi 100.1372          /* longtitude */
+//#define  LHAASO_Lngi 100.1372          /* longitude */
 
 //#define  LHAASO_Lati 30.102          /*  latitude  */
-//#define  LHAASO_Lngi 90.522          /* longtitude */
+//#define  LHAASO_Lngi 90.522          /* longitude */
 
 #define YBJ_Lati 30.102                  /*  latitude  */
-#define YBJ_Lngi 90.522 /* longtitude */ //ybj!! not lhaaso!!
+#define YBJ_Lngi 90.522 /* longitude */ //ybj!! not lhaaso!!
 
 #define PS_INPUT 1
 

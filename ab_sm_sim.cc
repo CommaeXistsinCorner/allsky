@@ -20,7 +20,7 @@ double num_sig, num_bg, num_sig_max, num_bg_max;
 int num_bin, num_bin_max;
 int smth[200000][2];
 int smth_num;
-int normlize(int norm_f);
+int normalize(int norm_f);
 double wcda_ang(double ep)
 {
   int i = 0;
@@ -292,7 +292,7 @@ void sig_correct(int i0, int j0, double r_smooth, double grid_width, double *sig
   *intens = 1. + Nsig_tot / Nbg_tot;
 }
 
-int normlize(int norm_f)
+int normalize(int norm_f)
 {
   int i, j;
   ///////////////////////global normal//////////////////
