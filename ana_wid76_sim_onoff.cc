@@ -139,7 +139,7 @@ int main(int argc,char *argv[])
       }
 //fprintf(stderr,"ok\n");
 //fprintf(stderr,"%d %d %d %d\n",isr,i,i_ra,j_dec);
-   }
+  }
     
 //fprintf(stderr,"%d %d %d %d\n",isr,i,i_ra,j_dec);
     // printf("at the end t=%d\t %f\t%.20f\n",t,beta[358][40],ki2);
@@ -173,7 +173,7 @@ int main(int argc,char *argv[])
       for(i=0;i<NRA;i++)	       {
         if(ismon==1) printf("RA-DEC map!   %3d%% \r",int(i*100/NRA));
         for(j=0;j<NDEC;j++)             {
-     //		   printf("%f\n",a[j][i]);
+    //		   printf("%f\n",a[j][i]);
           fwrite(&a[i][j],8,1,fp_out);
           fwrite(&b[i][j],8,1,fp_out);
           max+=a[i][j];
@@ -199,27 +199,27 @@ int main(int argc,char *argv[])
           hdec->Fill((j+0.5)*equa_sys_width+DEC_MIN,a[i][j]);		        
         }
       }
-         printf("\nsig_max=%f\n ps_sig=%f\n ps_bg=%f\n",sig_max,ps_sig,ps_bg);
-         printf("sig_max(ra,dec) = ( %3f , %3f )\n",ps_ra,ps_dec);
-	 printf("max=%f\n",max);  
-	 fprintf(fp_log,"sig_max=%f\n ps_sig=%f\n ps_bg=%f\n",sig_max,ps_sig,ps_bg);
-         fprintf(fp_log,"sig_max(ra,dec) = ( %3f , %3f )\n",ps_ra,ps_dec);
-	 fprintf(fp_log,"max=%f\n",max);  
-         hfile.Write();
-	 hfile.Close();
+        printf("\nsig_max=%f\n ps_sig=%f\n ps_bg=%f\n",sig_max,ps_sig,ps_bg);
+        printf("sig_max(ra,dec) = ( %3f , %3f )\n",ps_ra,ps_dec);
+printf("max=%f\n",max);  
+        fprintf(fp_log,"sig_max=%f\n ps_sig=%f\n ps_bg=%f\n",sig_max,ps_sig,ps_bg);
+        fprintf(fp_log,"sig_max(ra,dec) = ( %3f , %3f )\n",ps_ra,ps_dec);
+	      fprintf(fp_log,"max=%f\n",max);  
+        hfile.Write();
+	      hfile.Close();
 
-         fclose(fp_in);
-         fclose(fp_log);
-         fclose(fp_na);
-	 fclose(fp_out);
+        fclose(fp_in);
+        fclose(fp_log);
+        fclose(fp_na);
+        fclose(fp_out);
 
-         if(ismon==0)
-         {
-           strcpy(argv[1],filename);
-           remove(strcat(argv[1],"_tmp_na"));
-           strcpy(argv[1],filename);
+        if(ismon==0)
+        {
+          strcpy(argv[1],filename);
+          remove(strcat(argv[1],"_tmp_na"));
+          strcpy(argv[1],filename);
 //           remove(strcat(argv[1],"c.dat"));
-         }
+        }
  	 return 0;
 }
 
@@ -235,7 +235,7 @@ double normlize(int norm_f,int clean_flag)
       for(j=0;j<NRA;j++)     {
 	if(a[j][i]==0) beta[j][i]=1.;
 	else   beta[j][i]=b[j][i]/a[j][i];
-           
+
 	I_c0+=1./beta[j][i]*a[j][i]*beta[j][i]*beta[j][i];
 	I_c0_err+=a[j][i]*beta[j][i]*beta[j][i];
       }
@@ -267,7 +267,7 @@ double normlize(int norm_f,int clean_flag)
     }
   }
   
-   ///////////////////////Dec. normal//////////////////
+///////////////////////Dec. normal//////////////////
   else if(norm_f==2) {
     double I_c[NDEC],I_c_err[NDEC];
     for(i=0;i<NDEC;i++)    {
@@ -287,7 +287,7 @@ double normlize(int norm_f,int clean_flag)
       }
     }
   }
- 
+
   else if(norm_f==3) {
     double beta_c[NDEC];
     for(i=0;i<NDEC;i++)    {
@@ -324,7 +324,7 @@ double normlize(int norm_f,int clean_flag)
       }
     } 
   }
- 
+
   return 0;
 }
 

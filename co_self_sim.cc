@@ -24,7 +24,7 @@ int main(int argc,char *argv[])
   double                    n_b=0.;
   int                      ismon=1;
   char                     filename[200];
-   
+
   if(argc<2) { printf("%s  input(.dat)  [1 for monitor mode]\n",argv[0]);exit(0);}
   if(argc>=3)  ismon=atoi(argv[2]);
   strcpy(filename,argv[1]);  
@@ -75,28 +75,28 @@ int main(int argc,char *argv[])
   }
     // exit(0);
     ///////////////////////eff calculate////////////////////////
-   fseek(fp_in,0L,0);
+  fseek(fp_in,0L,0);
 
-   for(isr=0;isr<NLST;isr++) {  
-     if(ismon==1) printf("correcting data!   %3d%% \r",int(isr*100/NLST));
-     for(k=0;k<NZEAZ;k++)      {
-       fread(&n0,sizeof(n0),1,fp_in);
-       n=n0/eff[k];
-       if(n<0.0) n=0.0;
-       if(isnan(n)!=0||isinf(n)!=0) n=0.0;
+  for(isr=0;isr<NLST;isr++) {  
+    if(ismon==1) printf("correcting data!   %3d%% \r",int(isr*100/NLST));
+    for(k=0;k<NZEAZ;k++)      {
+      fread(&n0,sizeof(n0),1,fp_in);
+      n=n0/eff[k];
+      if(n<0.0) n=0.0;
+      if(isnan(n)!=0||isinf(n)!=0) n=0.0;
 //       	  fprintf(stderr,"%d %f %f\n",n0,n,phi_cor(&iflag,&theta,&phi));
-       fwrite(&n,sizeof(n),1,fp_out);
+      fwrite(&n,sizeof(n),1,fp_out);
 //       cout<<n<<endl;
-       max+=n;
-     }                   			          
-   }
+      max+=n;
+    }                   			          
+  }
 
-   printf("\n%f\tmax = %f\n",n,max);
-   fprintf(fp_log,"%f\tmax = %f\n",n,max);  max = 0.;
+  printf("\n%f\tmax = %f\n",n,max);
+  fprintf(fp_log,"%f\tmax = %f\n",n,max);  max = 0.;
 
-   fclose(fp_log);
-   fclose(fp_in);
-   fclose(fp_out);
-   if(ismon==0)  {strcpy(argv[1],filename);remove(strcat(argv[1],".dat"));}
-   return 0;
+  fclose(fp_log);
+  fclose(fp_in);
+  fclose(fp_out);
+  if(ismon==0)  {strcpy(argv[1],filename);remove(strcat(argv[1],".dat"));}
+  return 0;
 }

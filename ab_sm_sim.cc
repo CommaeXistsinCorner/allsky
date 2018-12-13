@@ -198,11 +198,11 @@ int main(int argc,char *argv[])
     }
   }
 
-   hfile.Write();
-   hfile.Close();
-   fclose(fp_log);
-   if(ismon==0)  {strcpy(argv[1],filename);remove(strcat(argv[1],"d.dat"));}
-   return 0;
+  hfile.Write();
+  hfile.Close();
+  fclose(fp_log);
+  if(ismon==0)  {strcpy(argv[1],filename);remove(strcat(argv[1],"d.dat"));}
+  return 0;
 }
 
 void sig_correct(int i0, int j0, double r_smooth, double grid_width, double *sig, double *intens, double *Nsig, double *Nbg, int *Nsmthbin)

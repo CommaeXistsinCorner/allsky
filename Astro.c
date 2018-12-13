@@ -166,15 +166,15 @@ void horizon_equator(double mjd, double zen,double azi, double *ras,double *dec 
 }
 
 void htoe2(double zen,double azim,double lst,double *ra,double *dec)
- {
-   double  lngtd=LHAASO_Lngi;
-   double  lattd=LHAASO_Lati;
-   double  h,a,hh;
-   lngtd=lngtd*deg_rad;
-   lattd=lattd*deg_rad;
-   h=(90.0-zen)*deg_rad;
-   a=azim*deg_rad;
-   lst=lst*deg_rad;
+{
+  double  lngtd=LHAASO_Lngi;
+  double  lattd=LHAASO_Lati;
+  double  h,a,hh;
+  lngtd=lngtd*deg_rad;
+  lattd=lattd*deg_rad;
+  h=(90.0-zen)*deg_rad;
+  a=azim*deg_rad;
+  lst=lst*deg_rad;
 
 
         hh = atan2( -cos(h)*sin(a),
@@ -185,19 +185,19 @@ void htoe2(double zen,double azim,double lst,double *ra,double *dec)
 
         *dec = asin(sin(lattd)*sin(h)+cos(lattd)*cos(h)*cos(a))*rad_deg;
 
- }
+}
 
 
 void htoe2_ybj(double zen,double azim,double lst,double *ra,double *dec)
- {
-   double  lngtd=YBJ_Lngi;
-   double  lattd=YBJ_Lati;
-   double  h,a,hh;
-   lngtd=lngtd*deg_rad;
-   lattd=lattd*deg_rad;
-   h=(90.0-zen)*deg_rad;
-   a=azim*deg_rad;
-   lst=lst*deg_rad;
+{
+  double  lngtd=YBJ_Lngi;
+  double  lattd=YBJ_Lati;
+  double  h,a,hh;
+  lngtd=lngtd*deg_rad;
+  lattd=lattd*deg_rad;
+  h=(90.0-zen)*deg_rad;
+  a=azim*deg_rad;
+  lst=lst*deg_rad;
 
 
         hh = atan2( -cos(h)*sin(a),
@@ -208,7 +208,7 @@ void htoe2_ybj(double zen,double azim,double lst,double *ra,double *dec)
 
         *dec = asin(sin(lattd)*sin(h)+cos(lattd)*cos(h)*cos(a))*rad_deg;
 
- }
+}
 
 /********** caluculation of distance 
  *                          by (altitude & longitude) 

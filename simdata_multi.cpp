@@ -542,8 +542,8 @@ double rand_gauss(double mu , double sigma )
 
     if(phase == 0)
     {
-         U = rand() / (RAND_MAX + 1.0);
-         V = rand() / (RAND_MAX + 1.0);
+      U = rand() / (RAND_MAX + 1.0);
+      V = rand() / (RAND_MAX + 1.0);
          Z = sqrt(-2.0 * log(U))* sin(2.0 * PI * V);
     }
     else
