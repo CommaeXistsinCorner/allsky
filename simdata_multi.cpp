@@ -148,7 +148,7 @@ copt = 14.4;
   printf("(Emin,Emax) = (%g,%g)\n",emin_ga,emax_ga);
   fprintf(fp_log,"(Emin,Emax) = (%g,%g)\n",emin_ga,emax_ga);
 
-  for(int tmp_i=0,tmp_k=0; tmp_i<NZE; tmp_i++)  {  
+  for(int tmp_i=0, tmp_k=0; tmp_i<NZE; tmp_i++)  {  
     NAZ0[tmp_i] = ceil( 360.0 * sin((0.5+tmp_i)*hori_sys_width*PI/180.0) / hori_sys_width );  
     NAZ[tmp_i] = tmp_k;  
     tmp_k += NAZ0[tmp_i];  
@@ -199,21 +199,27 @@ copt = 14.4;
   for(isr=0;isr<NLST;isr++) {
     if(ismon==1) printf("background set!   %3d%%\r",int(isr*100/NLST));
     for(i=0;i<NZE;i++) {
+      float buffer1[NAZ0[i]] = {0};
       for(j=0;j<NAZ0[i];j++) {
         if(evnum_p[i] > 50)
           {
-            tmp_stream1 = rand_gauss((double)evnum_p[i],(double)sqrt(evnum_p[i]));
-            if(tmp_stream1<0)  tmp_stream1 = 0.;
+            buffer1[j] = rand_gauss((double)evnum_p[i],(double)sqrt(evnum_p[i]));
+//            tmp_stream1 = rand_gauss((double)evnum_p[i],(double)sqrt(evnum_p[i]));
+//            if(tmp_stream1<0)  tmp_stream1 = 0.;
           }
         else
           {
-            tmp_stream1 = rand_possion((double)evnum_p[i]);
+            buffer1[j] = rand_possion((double)evnum_p[i]);
+//            tmp_stream1 = rand_possion((double)evnum_p[i]);
           }
-        if(isnan(tmp_stream1)!=0||isinf(tmp_stream1)!=0)  tmp_stream1 = 0.;
+        if(isnan(buffer1[j])!=0||isinf(buffer1[j])!=0||buffer1[j]<0)  buffer1[j] = 0.;
+//        if(isnan(tmp_stream1)!=0||isinf(tmp_stream1)!=0)  tmp_stream1 = 0.;
 //tmp_stream1=0.;
-        fwrite(&tmp_stream1,sizeof(tmp_stream1),1,fp_out);
-        cr_max+=tmp_stream1;
+//        fwrite(&tmp_stream1,sizeof(tmp_stream1),1,fp_out);
+        cr_max+=buffer1[j];
+//        cr_max+=tmp_stream1;
       }
+      fwrite(buffer1,sizeof(float),NAZ0[i],fp_out);
     }
 //    printf("%d\n",isr);
 //    printf("background set!  isr = %5d in %d \r",isr,NLST);
@@ -244,24 +250,26 @@ copt = 14.4;
     
     for(rewind(fp_out),isr=0;isr<NLST;isr++) {
       for(rewind(fp_grid_ra_dec),i=0;i<NZE;i++) {
-        tmp_stream2=0.0;
+//        tmp_stream2=0.0;
+        float buffer1[NAZ0[i]] = {0};
+        fread(buffer1,sizeof(float),NAZ0[i],fp_out);
         for(j=0;j<NAZ0[i];j++) {
-          fread(&tmp_stream1,sizeof(tmp_stream1),1,fp_out);
-          tmp_stream2 += tmp_stream1/NAZ0[i];
-          hzen->Fill((i+0.5)*hori_sys_width,tmp_stream1);
+//          fread(&tmp_stream1,sizeof(tmp_stream1),1,fp_out);
+          tmp_stream2 += buffer1[j]/NAZ0[i];
+          hzen->Fill((i+0.5)*hori_sys_width,buffer1[j]);
 //          hazim->Fill((j-0.5+rand()/RAND_MAX)*360./NAZ0[i],tmp_stream1);
-          hazim->Fill((j+0.5)*360./NAZ0[i],tmp_stream1);
+          hazim->Fill((j+0.5)*360./NAZ0[i],buffer1[j]);
           fread(&ra,sizeof(ra),1,fp_grid_ra_dec);
           fread(&dec,sizeof(dec),1,fp_grid_ra_dec);
           ra = (ra+isr*equa_sys_width)<360.0?(ra+isr*equa_sys_width):(ra+isr*equa_sys_width-360.0);
-          hra->Fill(ra,tmp_stream1);
-          hdec->Fill(dec,tmp_stream1);
-          hradec->Fill(ra,dec,tmp_stream1);
+          hra->Fill(ra,buffer1[j]);
+          hdec->Fill(dec,buffer1[j]);
+          hradec->Fill(ra,dec,buffer1[j]);
         }
         fwrite(&tmp_stream2,sizeof(tmp_stream2),1,fp_nb);
-        for(fseek(fp_out,-NAZ0[i]*sizeof(tmp_stream1),SEEK_CUR),j=0;j<NAZ0[i];j++) {
-          fread(&tmp_stream1,sizeof(tmp_stream1),1,fp_out);
-          hsig->Fill((tmp_stream1-tmp_stream2)/sqrt(tmp_stream2));
+        for(j=0;j<NAZ0[i];j++) {
+//          fread(&tmp_stream1,sizeof(tmp_stream1),1,fp_out);
+          hsig->Fill((buffer1[j]-tmp_stream2)/sqrt(tmp_stream2));
         }  
       }
         if(ismon==1) printf("writing data!   %3d%%\r",int(isr*100/NLST));
@@ -353,7 +361,8 @@ ang_opt = 0.557;
 //printf("======\n %f  %f\n",ZEN, AZI);
 
 //    for(i_PS=63;i_PS<64;i_PS++)  
-    for(i_PS=0;i_PS<PS_num;i_PS++)  {
+//    for(i_PS=0;i_PS<PS_num;i_PS++)  {
+    for(i_PS=0;i_PS<1;i_PS++)  {
       for(isr=0;isr<NLST;isr++) {
         lst = (isr+0.5)*equa_sys_width;
         equator_horizon_lst( lst, PS_TEVCAT[i_PS][0], PS_TEVCAT[i_PS][1], &ZEN, &AZI);
@@ -362,11 +371,10 @@ ang_opt = 0.557;
         if(ZEN>zex) continue;
         if(AZI<0) AZI +=360.;
         
-        i0 = ZEN/hori_sys_width;
+        i0 = int(ZEN/hori_sys_width);
         if(evnum_ga[i_PS][i0] > 50)
         {
           tmp_num_ga = rand_gauss((double)evnum_ga[i_PS][i0],(double)sqrt(evnum_ga[i_PS][i0]));
-          if(tmp_num_ga<0)  tmp_num_ga = 0.;
         }
         else
         {
@@ -374,7 +382,7 @@ ang_opt = 0.557;
         }
 //        printf("%d %f %f\n",i_PS,evnum_ga[i_PS][i0],tmp_num_ga);
   //      max+=tmp_num_ga;
-        if(isnan(tmp_num_ga)!=0||isinf(tmp_num_ga)!=0)  tmp_num_ga=0.;
+        if(isnan(tmp_num_ga)!=0||isinf(tmp_num_ga)!=0||tmp_num_ga<0)  tmp_num_ga=0.;
         ga_max_reso0[i_PS]+=evnum_ga[i_PS][i0];
 
         bg_max_tmp = 0.;
@@ -385,39 +393,46 @@ ang_opt = 0.557;
         imin = (i0-i_err)>0?i0-i_err:0;
         imax = (i0+i_err)<NZE?i0+i_err:NZE;
         for(i=imin;i<imax;i++) {
-          j0 = AZI*NAZ0[i]/360.;
+          j0 = int(AZI*NAZ0[i]/360.);
           jmin = (j0-i_err)>0?j0-i_err:0;
           jmax = (j0+i_err)<NAZ0[i]?j0+i_err:NAZ0[i];
-          for(j=jmin;j<jmax;j++)
+          float buffer1[jmax-jmin+1] = {0};
+          float buffer2[jmax-jmin+1] = {0};
+	  fseek(fp_out,(isr*NZEAZ+NAZ[i]+jmin)*sizeof(float),SEEK_SET);
+	  fread(buffer1,sizeof(float),jmax-jmin+1,fp_out);
+	  for(j=jmin;j<jmax;j++)
           {
             k = NAZ[i]+j;
     
-            fseek(fp_out,(isr*NZEAZ+k)*sizeof(tmp_stream1),SEEK_SET);
-            fread(&tmp_stream1,sizeof(tmp_stream1),1,fp_out);
+//            fseek(fp_out,(isr*NZEAZ+k)*sizeof(tmp_stream1),SEEK_SET);
+//            fread(&tmp_stream1,sizeof(tmp_stream1),1,fp_out);
   //printf("tmp_stream1 %f\n",tmp_stream1);
-            theta = distance_horizontal(i0*hori_sys_width, 360.0*j0/NAZ0[i], i*hori_sys_width, 360.0*j/NAZ0[i]);
+            theta = distance_horizontal((i0+0.5)*hori_sys_width, 360.0*(j0+0.5)/NAZ0[i], (i+0.5)*hori_sys_width, 360.0*(j+0.5)/NAZ0[i]);
             if(PS_TEVCAT[i_PS][6]<0.01)
             {
-              tmp_stream2 =  tmp_stream1 + tmp_num_ga * wcda_theta_dist1(theta) * area_nze[i];
+              buffer2[j-jmin] =  buffer1[j-jmin] + tmp_num_ga * wcda_theta_dist1(theta) * area_nze[i];
             }
             else
             {
-              tmp_stream2 =  tmp_stream1 + tmp_num_ga * bigaussian_mean( theta , sqrt(PS_TEVCAT[i_PS][6] * PS_TEVCAT[i_PS][6] + ang_reso * ang_reso) ) * area_nze[i];
+              buffer2[j-jmin] =  buffer1[j-jmin] + tmp_num_ga * bigaussian_mean( theta , sqrt(PS_TEVCAT[i_PS][6] * PS_TEVCAT[i_PS][6] + ang_reso * ang_reso) ) * area_nze[i];
             }
   //printf("tmp_stream2 %f\n",tmp_stream2);
-            if(tmp_stream2<1e-12) zero_num[i_PS]++;
-            fseek(fp_out,(isr*NZEAZ+k)*sizeof(tmp_stream1),SEEK_SET);
-            fwrite(&tmp_stream2,sizeof(tmp_stream1),1,fp_out);
+            if(buffer2[j-jmin]<1e-12) zero_num[i_PS]++;
+//            fseek(fp_out,(isr*NZEAZ+k)*sizeof(tmp_stream1),SEEK_SET);
+//            fwrite(&tmp_stream2,sizeof(tmp_stream1),1,fp_out);
             if(theta<ang_opt)
             {
-              bg_max_tmp += tmp_stream1;
-              ga_max[i_PS] += tmp_stream2-tmp_stream1;
+              bg_max_tmp += buffer1[j-jmin];
+              ga_max[i_PS] += buffer2[j-jmin]-buffer1[j-jmin];
               S_ang_opt_raw += area_nze[i];
             }
-  //printf("max %f\n",max);
           }
+	  fseek(fp_out,-(jmax-jmin+1)*sizeof(float),SEEK_CUR);
+	  fwrite(buffer2,sizeof(float),jmax-jmin+1,fp_out);
         }
-        bg_max[i_PS] += bg_max_tmp * ( S_ang_opt  / S_ang_opt_raw );
+      //  bg_max[i_PS] += bg_max_tmp * ( S_ang_opt  / S_ang_opt_raw );
+        bg_max[i_PS] += bg_max_tmp;
+  printf("max %f\n",bg_max_tmp);
         if(ismon==1) printf("PS %4d of %4d set!   %3d%%\r",i_PS,PS_num,int(isr*100/NLST));
   //      printf("point source set! \t isr = %d in %d \r",isr,NLST);
       }
@@ -456,17 +471,19 @@ ang_opt = 0.557;
       for(rewind(fp_out),rewind(fp_nb),isr=0;isr<NLST;isr++) {
         for(rewind(fp_grid_ra_dec),i=0;i<NZE;i++) {
           fread(&tmp_stream2,sizeof(tmp_stream2),1,fp_nb);
+          float buffer1[NAZ0[i]] = {0};
+	  fread(buffer1,sizeof(float),NAZ0[i],fp_out);
           for(j=0;j<NAZ0[i];j++) {
-            fread(&tmp_stream1,sizeof(tmp_stream1),1,fp_out);
-            hzen_ps->Fill((i+0.5)*hori_sys_width,tmp_stream1);
+//            fread(&tmp_stream1,sizeof(tmp_stream1),1,fp_out);
+            hzen_ps->Fill((i+0.5)*hori_sys_width,buffer1[j]);
 //if(tmp_stream1>1e-6) printf("%f %f\n",(i+0.5)*hori_sys_width,tmp_stream1);
-            hazim_ps->Fill((j+0.5)*360./NAZ0[i],tmp_stream1);
+            hazim_ps->Fill((j+0.5)*360./NAZ0[i],buffer1[j]);
             fread(&ra,sizeof(ra),1,fp_grid_ra_dec);
             fread(&dec,sizeof(dec),1,fp_grid_ra_dec);
             ra = (ra+isr*equa_sys_width)<360.0?(ra+isr*equa_sys_width):(ra+isr*equa_sys_width-360.0);
-            hra_ps->Fill(ra,tmp_stream1);
-            hdec_ps->Fill(dec,tmp_stream1);
-            hsig_ps->Fill((tmp_stream1)/sqrt(tmp_stream2));
+            hra_ps->Fill(ra,buffer1[j]);
+            hdec_ps->Fill(dec,buffer1[j]);
+            hsig_ps->Fill((buffer1[j])/sqrt(tmp_stream2));
           }
 //          fread(&tmp_stream2,sizeof(tmp_stream2),1,fp_nb);
 //          for(fseek(fp_out,-NAZ0[i]*sizeof(tmp_stream1),SEEK_CUR),j=0;j<NAZ0[i];j++) {
